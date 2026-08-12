@@ -1,0 +1,1322 @@
+/*
+ * CMP Design System
+ * A minimal, professional SaaS theme
+ * 8px spacing scale | Inter font | Neutral palette
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   CSS VARIABLES - DESIGN TOKENS
+   ============================================ */
+@layer base {
+  :root {
+    /* Spacing Scale (8px base) - Responsive */
+    --space-1: clamp(0.25rem, 0.5vw, 0.25rem);
+    --space-2: clamp(0.5rem, 1vw, 0.5rem);
+    --space-3: clamp(0.75rem, 1.5vw, 0.75rem);
+    --space-4: clamp(1rem, 2vw, 1rem);
+    --space-5: clamp(1.25rem, 2.5vw, 1.25rem);
+    --space-6: clamp(1.5rem, 3vw, 1.5rem);
+    --space-8: clamp(2rem, 4vw, 2rem);
+    --space-10: clamp(2.5rem, 5vw, 2.5rem);
+    --space-12: clamp(3rem, 6vw, 3rem);
+    --space-16: clamp(4rem, 8vw, 4rem);
+    
+    /* Responsive Typography */
+    --font-size-xs: clamp(0.75rem, 1.5vw, 0.75rem);
+    --font-size-sm: clamp(0.875rem, 1.75vw, 0.875rem);
+    --font-size-base: clamp(1rem, 2vw, 1rem);
+    --font-size-lg: clamp(1.125rem, 2.25vw, 1.125rem);
+    --font-size-xl: clamp(1.25rem, 2.5vw, 1.25rem);
+    --font-size-2xl: clamp(1.5rem, 3vw, 1.5rem);
+    --font-size-3xl: clamp(1.875rem, 3.75vw, 1.875rem);
+    
+    /* Minimum tap target size (44x44px for mobile) */
+    --tap-target-min: 44px;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Light Mode - Clean white/gray */
+    --background: white;        /* #f8fafc */
+    --foreground: 222 47% 11%;        /* #1e293b */
+    
+    --card: 0 0% 100%;                /* white */
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    --primary: 187 100% 42%;          /* #00B4D8 - cyan blue */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 210 40% 96%;         /* #f1f5f9 */
+    --secondary-foreground: 222 47% 11%;
+    
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;  /* #64748b */
+    
+    --accent: 187 100% 42%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 214 32% 91%;            /* #e2e8f0 */
+    --input: 214 32% 91%;
+    --ring: 187 100% 42%;
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --info: 199 89% 48%;
+    --error: 0 84% 60%;
+  }
+
+  .dark {
+    /* Dark Mode - Slate tones, consistent */
+    --background: 222 47% 11%;        /* #1e293b */
+    --foreground: 210 40% 98%;        /* #f8fafc */
+    
+    --card: 217 33% 17%;              /* #334155 */
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
+    
+    --primary: 187 100% 42%;          /* #00B4D8 - cyan blue */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;  /* #94a3b8 */
+    
+    --accent: 187 100% 42%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 217 33% 25%;            /* #475569 */
+    --input: 217 33% 17%;
+    --ring: 187 100% 42%;
+
+    --success: 142 71% 50%;
+    --warning: 38 92% 55%;
+    --info: 199 89% 48%;
+    --error: 0 62% 55%;
+  }
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    letter-spacing: 0;
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Prevent horizontal overflow on all elements */
+  * {
+    max-width: 100%;
+  }
+  
+  /* Ensure images and media are responsive */
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Typography Scale */
+  h1 {
+    @apply text-3xl font-semibold tracking-tight;
+    line-height: 1.2;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+    line-height: 1.25;
+  }
+  
+  h3 {
+    @apply text-xl font-semibold;
+    line-height: 1.3;
+  }
+
+  h4 {
+    @apply text-lg font-medium;
+    line-height: 1.35;
+  }
+
+  h5 {
+    @apply text-base font-medium;
+  }
+
+  h6 {
+    @apply text-sm font-medium;
+  }
+
+  p {
+    @apply text-base leading-relaxed;
+  }
+
+  small {
+    @apply text-sm text-muted-foreground;
+  }
+}
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+@layer components {
+  /* Page Layout - Responsive */
+  .page-container {
+    @apply max-w-[1200px] mx-auto;
+    @apply px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8;
+    @apply w-full overflow-x-hidden;
+  }
+
+  .page-header {
+    @apply mb-8;
+  }
+
+  .page-title {
+    @apply text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-foreground;
+  }
+
+  .page-subtitle {
+    @apply text-sm text-muted-foreground mt-1;
+  }
+
+  /* Section */
+  .section {
+    @apply mb-8;
+  }
+  
+  .section-title {
+    @apply text-base font-medium text-foreground mb-4;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-card rounded-md border border-border;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card:hover {
+    @apply border-border;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .card {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .card:hover {
+    box-shadow: 
+      0 4px 16px -4px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(45, 212, 191, 0.05);
+  }
+
+  .card-interactive {
+    @apply card cursor-pointer;
+  }
+
+  .card-interactive:hover {
+    @apply border-primary/30;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2;
+    @apply text-sm font-medium;
+    @apply rounded-md px-4 py-2;
+    @apply transition-all duration-150;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring/40 focus:ring-offset-2 focus:ring-offset-background;
+    @apply disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-primary-foreground;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-primary:hover {
+    @apply brightness-110;
+    box-shadow: 0 4px 12px -4px rgba(17, 163, 191, 0.4);
+  }
+
+  .btn-secondary {
+    @apply btn bg-secondary text-secondary-foreground border border-border;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-muted;
+  }
+  
+  .btn-ghost {
+    @apply btn text-muted-foreground;
+  }
+
+  .btn-ghost:hover {
+    @apply bg-secondary text-foreground;
+  }
+
+  .btn-destructive {
+    @apply btn bg-destructive text-destructive-foreground;
+  }
+
+  .btn-destructive:hover {
+    @apply brightness-110;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-3 py-2;
+    @apply text-sm text-foreground bg-background;
+    @apply border border-border rounded-md;
+    @apply placeholder:text-muted-foreground;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring/40 focus:ring-offset-0;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .input:hover:not(:focus):not(:disabled) {
+    @apply border-muted-foreground/30;
+  }
+
+  .dark .input {
+    @apply bg-input;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5;
+    @apply text-xs font-medium rounded-full;
+  }
+
+  .badge-default {
+    @apply badge bg-secondary text-secondary-foreground;
+  }
+
+  .badge-success {
+    @apply badge bg-success/15 text-success;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning/15 text-warning;
+  }
+
+  .badge-error {
+    @apply badge bg-error/15 text-error;
+  }
+
+  .badge-info {
+    @apply badge bg-info/15 text-info;
+  }
+
+  /* Status Indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-dot-success {
+    @apply status-dot bg-success;
+  }
+
+  .status-dot-warning {
+    @apply status-dot bg-warning;
+  }
+
+  .status-dot-error {
+    @apply status-dot bg-error;
+  }
+
+  /* Tables */
+  .table-header {
+    @apply text-xs font-medium text-muted-foreground uppercase tracking-wider;
+  }
+
+  .table-cell {
+    @apply py-3 text-sm;
+  }
+
+  .table-row {
+    @apply border-b border-border last:border-0;
+  }
+
+  .table-row:hover {
+    @apply bg-muted/50;
+  }
+
+  /* Dividers */
+  .divider {
+    @apply border-t border-border;
+  }
+
+  /* Empty States */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 text-center;
+  }
+
+  .empty-state-icon {
+    @apply w-12 h-12 text-muted-foreground/50 mb-4;
+  }
+
+  .empty-state-title {
+    @apply text-base font-medium text-foreground mb-1;
+  }
+
+  .empty-state-description {
+    @apply text-sm text-muted-foreground max-w-sm;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+@layer utilities {
+  /* Spacing utilities based on 8px scale */
+  .gap-grid {
+    gap: var(--space-6);
+  }
+
+  .p-card {
+    padding: var(--space-6);
+  }
+
+  .mb-section {
+    margin-bottom: var(--space-8);
+  }
+
+  /* Shadows */
+  .shadow-soft {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  .shadow-medium {
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-elevated {
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.12);
+  }
+
+  .dark .shadow-soft {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .shadow-medium {
+    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.4);
+  }
+
+  .dark .shadow-elevated {
+    box-shadow: 
+      0 8px 24px -6px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.03);
+  }
+
+  /* Glow effects (dark mode accent) */
+  .glow-primary {
+    box-shadow: 0 0 20px -4px rgba(45, 212, 191, 0.2);
+  }
+
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-label {
+    @apply text-xs font-medium text-muted-foreground uppercase tracking-wider;
+  }
+
+  /* ============================================
+     ANIMATIONS - Modern SaaS Polish
+     ============================================ */
+
+  /* Base animations */
+  .animate-fade-in {
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-page-enter {
+    animation: pageEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Staggered animations for lists */
+  .animate-stagger > * {
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+  .animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .animate-stagger > *:nth-child(2) { animation-delay: 50ms; }
+  .animate-stagger > *:nth-child(3) { animation-delay: 100ms; }
+  .animate-stagger > *:nth-child(4) { animation-delay: 150ms; }
+  .animate-stagger > *:nth-child(5) { animation-delay: 200ms; }
+  .animate-stagger > *:nth-child(6) { animation-delay: 250ms; }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ============================================
+     TOOLTIP ANIMATIONS - Smooth & Polished
+     ============================================ */
+  
+  /* Smooth tooltip entrance */
+  @keyframes tooltipFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Smooth tooltip exit */
+  @keyframes tooltipFadeOut {
+    from {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.96) translateY(-2px);
+    }
+  }
+
+  /* Apply smooth animation to tooltip content */
+  [data-radix-tooltip-content] {
+    animation: tooltipFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  [data-radix-tooltip-content][data-state="closed"] {
+    animation: tooltipFadeOut 150ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  /* Sidebar Tooltip - Small, smooth, and refined */
+  .sidebar-tooltip {
+    transform: translateX(-4px) translateY(-50%);
+    transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .group:hover .sidebar-tooltip,
+  .group:focus-within .sidebar-tooltip {
+    transform: translateX(0) translateY(-50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-tooltip {
+      transition: opacity 0ms;
+      transform: translateX(0) translateY(-50%);
+    }
+  }
+
+  @keyframes slideDown {
+    from { 
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Loading shimmer for skeletons */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
+  }
+
+  /* ============================================
+     GLASS / FROSTED EFFECTS
+     ============================================ */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass {
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-subtle {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .dark .glass-subtle {
+    background: rgba(30, 41, 59, 0.6);
+  }
+
+  /* Liquid Glass Effect for Audit Log Notifications */
+  .audit-log-glass-container {
+    position: relative;
+    border-radius: 0.75rem;
+    padding: 0.375rem;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 
+      0 8px 32px 0 rgba(31, 38, 135, 0.12),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark .audit-log-glass-container {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+      0 8px 32px 0 rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .audit-log-glass-container:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 
+      0 12px 40px 0 rgba(31, 38, 135, 0.16),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+  }
+
+  .dark .audit-log-glass-container:hover {
+    background: rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      0 12px 40px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  }
+
+  /* Subtle inner glow on hover for enhanced glass effect */
+  .audit-log-glass-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15), transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .dark .audit-log-glass-container::after {
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 70%);
+  }
+
+  .audit-log-glass-container:hover::after {
+    opacity: 1;
+  }
+
+  /* Glass card with hover effect */
+  .glass-card-hover {
+    @apply transition-all duration-300 ease-out;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-card-hover:hover {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 20px 40px -15px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.4);
+  }
+
+  .dark .glass-card-hover {
+    background: rgba(51, 65, 85, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .dark .glass-card-hover:hover {
+    background: rgba(51, 65, 85, 0.85);
+    box-shadow: 
+      0 20px 40px -15px rgba(0, 0, 0, 0.4),
+      0 0 30px -10px rgba(14, 165, 233, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  /* ============================================
+     HOVER TRANSITIONS - Polished Interactions
+     ============================================ */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 12px 28px -8px rgba(0, 0, 0, 0.12),
+      0 4px 8px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .hover-lift:hover {
+    box-shadow: 
+      0 12px 28px -8px rgba(0, 0, 0, 0.5),
+      0 0 20px -8px rgba(14, 165, 233, 0.1);
+  }
+
+  /* Subtle hover for links and nav items */
+  .hover-subtle {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .hover-subtle:hover {
+    transform: translateX(2px);
+  }
+
+  /* Scale hover for buttons */
+  .hover-scale {
+    @apply transition-transform duration-200 ease-out;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  .hover-scale:active {
+    transform: scale(0.98);
+  }
+
+  /* Glow hover for primary actions */
+  .hover-glow {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 
+      0 0 20px -4px rgba(14, 165, 233, 0.4),
+      0 4px 12px -4px rgba(14, 165, 233, 0.3);
+  }
+
+  /* Card interactive hover - enhanced */
+  .card-interactive {
+    @apply transition-all duration-300 ease-out cursor-pointer;
+  }
+
+  .card-interactive:hover {
+    @apply border-primary/40;
+    transform: translateY(-3px);
+    box-shadow: 
+      0 16px 32px -12px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(14, 165, 233, 0.1);
+  }
+
+  .dark .card-interactive:hover {
+    box-shadow: 
+      0 16px 32px -12px rgba(0, 0, 0, 0.5),
+      0 0 24px -8px rgba(14, 165, 233, 0.2),
+      0 0 0 1px rgba(14, 165, 233, 0.15);
+  }
+
+  /* Button press effect */
+  .btn-press {
+    @apply transition-all duration-150 ease-out;
+  }
+
+  .btn-press:active {
+    transform: scale(0.97);
+  }
+
+  /* Icon hover rotation */
+  .hover-rotate {
+    @apply transition-transform duration-300 ease-out;
+  }
+
+  .hover-rotate:hover {
+    transform: rotate(8deg);
+  }
+
+  /* Underline animation for links */
+  .hover-underline {
+    position: relative;
+  }
+
+  .hover-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: hsl(var(--primary));
+    transition: width 0.3s ease-out;
+  }
+
+  .hover-underline:hover::after {
+    width: 100%;
+  }
+
+  /* Focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-ring/40 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.3);
+  }
+
+}
+
+/* ============================================
+   LEGACY COMPATIBILITY (gradually remove)
+   ============================================ */
+@layer utilities {
+  .glass-card {
+    @apply card;
+  }
+
+  .card-gradient {
+    @apply card;
+  }
+
+  .card-hover {
+    @apply card-interactive;
+  }
+
+  .status-badge {
+    @apply badge;
+  }
+
+  .status-badge-success {
+    @apply badge-success;
+  }
+
+  .status-badge-warning {
+    @apply badge-warning;
+  }
+
+  .status-badge-error {
+    @apply badge-error;
+  }
+
+  .status-badge-info {
+    @apply badge-info;
+  }
+}
+
+/* ============================================
+   REACT DATEPICKER CUSTOM STYLES
+   Matches CMP design system
+   ============================================ */
+
+/* Datepicker popup container */
+.react-datepicker {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  background: hsl(var(--card));
+  box-shadow: 0 10px 40px -15px rgba(0, 0, 0, 0.1), 0 0 0 1px hsl(var(--border) / 0.5);
+  padding: 0.5rem;
+}
+
+.dark .react-datepicker {
+  box-shadow: 0 10px 40px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px hsl(var(--border) / 0.5);
+}
+
+/* Header (month/year selector) */
+.react-datepicker__header {
+  background: hsl(var(--card));
+  border-bottom: 1px solid hsl(var(--border));
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding-top: 0.75rem;
+}
+
+.react-datepicker__current-month {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.react-datepicker__day-names {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 0.25rem;
+}
+
+.react-datepicker__day-name {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 2rem;
+  line-height: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Navigation arrows */
+.react-datepicker__navigation {
+  top: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.react-datepicker__navigation:hover {
+  background: hsl(var(--secondary));
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: hsl(var(--muted-foreground));
+  border-width: 2px 2px 0 0;
+}
+
+.react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: hsl(var(--foreground));
+}
+
+/* Calendar days */
+.react-datepicker__month {
+  margin: 0.5rem 0;
+}
+
+.react-datepicker__week {
+  display: flex;
+  justify-content: space-around;
+}
+
+.react-datepicker__day {
+  color: hsl(var(--foreground));
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  border-radius: 0.375rem;
+  margin: 0.125rem;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.react-datepicker__day:hover {
+  background: hsl(var(--secondary));
+  color: hsl(var(--foreground));
+  border-radius: 0.375rem;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-radius: 0.375rem;
+  font-weight: 600;
+}
+
+.react-datepicker__day--selected:hover,
+.react-datepicker__day--keyboard-selected:hover {
+  background: hsl(var(--primary) / 0.9) !important;
+}
+
+.react-datepicker__day--today {
+  font-weight: 600;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+}
+
+.react-datepicker__day--disabled {
+  color: hsl(var(--muted-foreground) / 0.3);
+  cursor: not-allowed;
+}
+
+.react-datepicker__day--disabled:hover {
+  background: transparent;
+}
+
+.react-datepicker__day--outside-month {
+  color: hsl(var(--muted-foreground) / 0.4);
+}
+
+.react-datepicker__day--range-start,
+.react-datepicker__day--range-end {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.react-datepicker__day--in-range {
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--foreground));
+}
+
+.react-datepicker__day--in-selecting-range {
+  background: hsl(var(--primary) / 0.25);
+}
+
+/* Today button */
+.react-datepicker__today-button {
+  background: hsl(var(--secondary));
+  border-top: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  transition: background 0.2s;
+}
+
+.react-datepicker__today-button:hover {
+  background: hsl(var(--secondary) / 0.8);
+}
+
+/* Time picker (if enabled) */
+.react-datepicker__time-container {
+  border-left: 1px solid hsl(var(--border));
+}
+
+.react-datepicker__time-container .react-datepicker__time {
+  background: hsl(var(--card));
+}
+
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
+  width: 5rem;
+}
+
+.react-datepicker__time-list-item {
+  color: hsl(var(--foreground));
+  height: 2rem;
+  line-height: 2rem;
+  transition: all 0.2s;
+}
+
+.react-datepicker__time-list-item:hover {
+  background: hsl(var(--secondary));
+}
+
+.react-datepicker__time-list-item--selected {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-weight: 600;
+}
+
+/* Popper positioning */
+.react-datepicker__triangle {
+  display: none; /* Hide default triangle, use shadow instead */
+}
+
+/* Input styling is handled by the component, but ensure consistency */
+.react-datepicker__input-container input {
+  width: 100%;
+}
+
+/* Accessibility improvements */
+.react-datepicker__day:focus,
+.react-datepicker__month-text:focus,
+.react-datepicker__quarter-text:focus,
+.react-datepicker__year-text:focus {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .react-datepicker {
+    font-size: 0.875rem;
+  }
+  
+  .react-datepicker__day,
+  .react-datepicker__day-name {
+    width: 2.25rem;
+    height: 2.25rem;
+    line-height: 2.25rem;
+  }
+}
+
+/* React-PDF Styles */
+.react-pdf__Page {
+  margin-bottom: 1rem;
+}
+
+.react-pdf__Page__canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.react-pdf__Page__textContent {
+  color: transparent;
+}
+
+.react-pdf__Page__textContent span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+.react-pdf__Page__annotations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Semicircular Notification Preview */
+.notification-semicircle {
+  position: relative;
+  width: 320px;
+  min-height: 200px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 0 40px rgba(0, 180, 216, 0.1);
+  border-radius: 0 32px 32px 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 15%, 0 0);
+  transform-origin: left center;
+  animation: unfoldSemicircle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes unfoldSemicircle {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 15%, 0 0);
+    opacity: 0;
+    transform: translateX(-30px) scale(0.9) rotateY(-5deg);
+    filter: blur(4px);
+  }
+  40% {
+    clip-path: polygon(0 0, 40% 0, 40% 100%, 0 100%, 0 15%, 0 0);
+    opacity: 0.5;
+    transform: translateX(-15px) scale(0.95) rotateY(-2deg);
+    filter: blur(2px);
+  }
+  70% {
+    clip-path: polygon(0 0, 80% 0, 80% 100%, 0 100%, 0 15%, 0 0);
+    opacity: 0.8;
+    transform: translateX(-5px) scale(0.98) rotateY(-1deg);
+    filter: blur(1px);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 15%, 0 0);
+    opacity: 1;
+    transform: translateX(0) scale(1) rotateY(0deg);
+    filter: blur(0);
+  }
+}
+
+.notification-content {
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.notification-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.notification-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notification-content::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 2px;
+}
+
+.notification-content::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Semicircular Notification Opened State */
+.notification-semicircle-opened {
+  position: relative;
+  width: 360px;
+  min-height: 300px;
+  max-height: 500px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 0 50px rgba(0, 180, 216, 0.15);
+  border-radius: 0 40px 40px 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 12%, 0 0);
+  transform-origin: left center;
+  animation: fadeInSemicircle 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.notification-semicircle-expanded {
+  width: 100%;
+  border-radius: 24px 24px 0 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 0 0);
+  border-radius: 24px;
+}
+
+@keyframes fadeInSemicircle {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 12%, 0 0);
+    opacity: 0;
+    transform: translateX(-40px) scale(0.85);
+    filter: blur(8px);
+  }
+  30% {
+    clip-path: polygon(0 0, 30% 0, 30% 100%, 0 100%, 0 12%, 0 0);
+    opacity: 0.3;
+    transform: translateX(-25px) scale(0.9);
+    filter: blur(4px);
+  }
+  60% {
+    clip-path: polygon(0 0, 70% 0, 70% 100%, 0 100%, 0 12%, 0 0);
+    opacity: 0.7;
+    transform: translateX(-10px) scale(0.95);
+    filter: blur(2px);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 12%, 0 0);
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Fade out animation */
+.notification-semicircle-opened.notification-fade-out {
+  animation: fadeOutSemicircle 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes fadeOutSemicircle {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 12%, 0 0);
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+  100% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 12%, 0 0);
+    opacity: 0;
+    transform: translateX(-40px) scale(0.85);
+    filter: blur(8px);
+  }
+}
