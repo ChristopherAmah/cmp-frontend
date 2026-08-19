@@ -223,20 +223,12 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
   };
 
   const handleEscalate = () => {
-    const defaultEmail = "support@company.com";
-    const recipient = window.prompt(
-      "Enter the email address to escalate this ticket:",
-      defaultEmail,
-    );
-
-    if (!recipient) return;
-
     const subject = encodeURIComponent(`Escalation: ${ticket.subject} (${ticket.id})`);
     const body = encodeURIComponent(
       `Hello,\n\nThis ticket needs escalation.\n\nTicket ID: ${ticket.id}\nSubject: ${ticket.subject}\nPriority: ${ticket.priority}\nStatus: ${ticket.status}\nCustomer: ${ticket.customer || "—"}\n\nPlease review and advise.`,
     );
 
-    window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
   return (
