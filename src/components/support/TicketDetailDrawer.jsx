@@ -190,7 +190,7 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
       onTicketUpdated?.(updated);
     } catch (error) {
       setAssignmentError(
-        error.response?.data?.message || "Unable to assign developers.",
+        error.response?.data?.message || error.message || "Unable to assign developers.",
       );
     } finally {
       setAssigningDeveloper(false);
