@@ -18,4 +18,7 @@ export const ticketService = {
   getTasks: async (ticketId) => (await api.get(`/tickets/${ticketId}/tasks`)).data?.data || [],
   createTask: async (ticketId, task) => (await api.post(`/tickets/${ticketId}/tasks`, task)).data?.data,
   updateTask: async (ticketId, taskId, updates) => (await api.patch(`/tickets/${ticketId}/tasks/${taskId}`, updates)).data?.data,
+  getAttachments: async (ticketId) => (await api.get(`/tickets/${ticketId}/attachments`)).data?.data || [],
+  uploadAttachment: async (ticketId, formData) => (await api.post(`/tickets/${ticketId}/attachments/upload`, formData, { headers: { "Content-Type": "multipart/form-data" } })).data?.data,
+  downloadAttachment: async (ticketId, attachmentId) => (await api.get(`/tickets/${ticketId}/attachments/${attachmentId}/download`, { responseType: "blob" })).data,
 };
