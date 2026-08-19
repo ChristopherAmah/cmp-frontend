@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createElement, useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -63,6 +63,10 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [developers, setDevelopers] = useState([]);
   const [assigningDeveloper, setAssigningDeveloper] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [editForm, setEditForm] = useState({});
   const targetHours = targets[ticket.priority] || 72;
   const elapsed = Math.max(
     0,
@@ -104,6 +108,26 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
     ["Channel", ticket.channel || "—"],
   ];
   const canComment = ["admin", "super_admin", "support_lead", "developer"].includes(user?.role);
+  const assignedDevelopers = Array.isArray(ticket.assignedTo)
+    ? ticket.assignedTo
+    : ticket.assignedTo
+      ? [ticket.assignedTo]
+      : [];
+
+  useEffect(() => {
+    setEditForm({
+      subject: ticket.subject || "",
+      description: ticket.description || "",
+      priority: ticket.priority || "Low",
+      status: ticket.status || "Open",
+      customer: ticket.customer || "",
+      type: ticket.type || ticket.category || "",
+      product: ticket.product || "",
+      module: ticket.module || "",
+      channel: ticket.channel || "",
+      contract: ticket.contract || "",
+    });
+  }, [ticket]);
 
   useEffect(() => {
     ticketService
@@ -132,19 +156,31 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
     }
   };
 
-  const handleAssignDeveloper = async (developerName) => {
-    if (!developerName) return;
+  const handleAssignDeveloper = async (selectedNames) => {
     setAssigningDeveloper(true);
     try {
       const updated = await ticketService.updateTicket(ticket.id, {
-        assignedTo: developerName,
-        developer: developerName,
+        assignedTo: selectedNames,
       });
       onTicketUpdated?.(updated);
     } catch (error) {
       console.error("Unable to assign developer", error);
     } finally {
       setAssigningDeveloper(false);
+    }
+  };
+
+  const handleEditSave = async () => {
+    setSavingEdit(true);
+    setEditError("");
+    try {
+      const updated = await ticketService.updateTicket(ticket.id, editForm);
+      onTicketUpdated?.(updated);
+      setIsEditing(false);
+    } catch (error) {
+      setEditError(error.response?.data?.message || "Unable to update ticket.");
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -199,7 +235,7 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
           </div>
         </header>
         <nav className="mt-4 flex overflow-x-auto border-b border-border px-4 sm:px-6">
-          {tabs.map(([label, Icon]) => (
+          {tabs.map(([label, TabIcon]) => (
             <button
               key={label}
               onClick={() => setTab(label)}
@@ -210,13 +246,43 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
                   : "border-transparent text-muted-foreground",
               )}
             >
-              <Icon className="h-3.5 w-3.5" />
+              {createElement(TabIcon, { className: "h-3.5 w-3.5" })}
               {label}
             </button>
           ))}
         </nav>
         {tab === "Details" && (
           <div className="space-y-3 px-4 py-4 sm:px-6">
+            {isEditing && (
+              <Card title="Edit ticket details">
+                <div className="space-y-3">
+                  <input value={editForm.subject || ""} onChange={(event) => setEditForm({ ...editForm, subject: event.target.value })} placeholder="Subject" className="w-full rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950" />
+                  <textarea value={editForm.description || ""} onChange={(event) => setEditForm({ ...editForm, description: event.target.value })} placeholder="Description" className="min-h-20 w-full resize-none rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <select value={editForm.type || ""} onChange={(event) => setEditForm({ ...editForm, type: event.target.value })} className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950">
+                      <option value="">Ticket type</option>
+                      {['Bug', 'Incident', 'Request'].map((value) => <option key={value} value={value}>{value}</option>)}
+                    </select>
+                    <select value={editForm.priority || ""} onChange={(event) => setEditForm({ ...editForm, priority: event.target.value })} className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950">
+                      {['Critical', 'High', 'Medium', 'Low'].map((value) => <option key={value} value={value}>{value}</option>)}
+                    </select>
+                    <select value={editForm.status || ""} onChange={(event) => setEditForm({ ...editForm, status: event.target.value })} className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950">
+                      {['Open', 'In Progress', 'Resolved', 'Closed'].map((value) => <option key={value} value={value}>{value}</option>)}
+                    </select>
+                    <input value={editForm.customer || ""} onChange={(event) => setEditForm({ ...editForm, customer: event.target.value })} placeholder="Customer" className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950" />
+                    <input value={editForm.product || ""} onChange={(event) => setEditForm({ ...editForm, product: event.target.value })} placeholder="Product" className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950" />
+                    <input value={editForm.module || ""} onChange={(event) => setEditForm({ ...editForm, module: event.target.value })} placeholder="Module" className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950" />
+                    <input value={editForm.channel || ""} onChange={(event) => setEditForm({ ...editForm, channel: event.target.value })} placeholder="Channel" className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950" />
+                    <input value={editForm.contract || ""} onChange={(event) => setEditForm({ ...editForm, contract: event.target.value })} placeholder="Contract" className="rounded-md border border-input bg-white px-2.5 py-2 text-xs dark:bg-slate-950" />
+                  </div>
+                  {editError && <p className="text-xs text-destructive">{editError}</p>}
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" variant="outline" onClick={() => setIsEditing(false)} disabled={savingEdit}>Cancel</Button>
+                    <Button size="sm" onClick={handleEditSave} disabled={savingEdit || !editForm.subject?.trim()}> {savingEdit ? "Saving..." : "Save changes"}</Button>
+                  </div>
+                </div>
+              </Card>
+            )}
             <section className="rounded-xl bg-secondary/60 p-3">
               <h3 className="text-[10px] font-semibold uppercase text-muted-foreground">
                 Description
@@ -292,12 +358,12 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
             <Card title="Assigned developers">
               <div className="space-y-3">
                 <select
-                  value={ticket.assignedTo || ""}
-                  onChange={(event) => handleAssignDeveloper(event.target.value)}
+                  multiple
+                  value={assignedDevelopers}
+                  onChange={(event) => handleAssignDeveloper(Array.from(event.target.selectedOptions, (option) => option.value))}
                   disabled={assigningDeveloper || developers.length === 0}
-                  className="w-full rounded-md border border-border bg-white px-2.5 py-2 text-xs text-foreground dark:bg-slate-950"
+                  className="min-h-24 w-full rounded-md border border-border bg-white px-2.5 py-2 text-xs text-foreground dark:bg-slate-950"
                 >
-                  <option value="">Unassigned</option>
                   {developers.map((developer) => (
                     <option key={developer._id} value={developer.name}>
                       {developer.name}
@@ -305,7 +371,7 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
                   ))}
                 </select>
                 <p className="text-[10px] text-muted-foreground">
-                  {ticket.assignedTo || "Unassigned"}
+                  {assignedDevelopers.length ? assignedDevelopers.join(", ") : "Unassigned"}
                 </p>
               </div>
             </Card>
@@ -328,7 +394,7 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
           </Button>
         </div>
         {canManage && (
-          <Button size="sm" variant="outline" className="h-8 text-xs">
+          <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => { setEditError(""); setIsEditing((current) => !current); }}>
             <Pencil className="mr-1 h-3.5 w-3.5" />
             Edit
           </Button>

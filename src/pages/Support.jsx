@@ -39,6 +39,11 @@ import {
 
 const SLA_TARGET_HOURS = { Critical: 4, High: 8, Medium: 24, Low: 72 };
 
+const getTicketAssignees = (ticket) => {
+  const assignees = ticket.assignedTo ?? ticket.developer;
+  return Array.isArray(assignees) ? assignees : assignees ? [assignees] : [];
+};
+
 const formatSlaDuration = (milliseconds) => {
   const absolute = Math.abs(milliseconds);
   const hours = Math.floor(absolute / 3_600_000);
@@ -68,7 +73,7 @@ const toSlaRecord = (ticket, now = Date.now()) => {
     ref: ticket.id,
     title: ticket.subject,
     severity: ticket.priority,
-    assignee: ticket.assignedTo || ticket.developer,
+    assignee: getTicketAssignees(ticket).join(", "),
     target: `${targetHours}h`,
     progress: isResolved ? 100 : progress,
     remaining: isResolved ? "Resolved" : formatSlaDuration(targetMs - elapsedMs),
@@ -342,7 +347,7 @@ const Support = () => {
   }, [slaRows, slaSearch, slaStatus, slaTab]);
 
   const developers = useMemo(
-    () => [...new Set(tickets.map((t) => t.developer).filter(Boolean))],
+    () => [...new Set(tickets.flatMap(getTicketAssignees))],
     [tickets]
   );
 
@@ -362,8 +367,8 @@ const Support = () => {
       const matchesDev =
         developer === "all" ||
         (developer === "unassigned"
-          ? !t.developer
-          : t.developer === developer);
+          ? getTicketAssignees(t).length === 0
+          : getTicketAssignees(t).includes(developer));
       return (
         matchesSearch &&
         matchesStatus &&
@@ -664,7 +669,7 @@ const Support = () => {
                             </Pill>
                           </td>
                           <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                            {t.category}
+                            {t.type || t.category || "—"}
                           </td>
                           <td className="px-4 py-3">
                             <Pill className={statusStyles[t.status]}>
@@ -672,13 +677,13 @@ const Support = () => {
                             </Pill>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
-                            {t.assignedTo ? (
+                            {getTicketAssignees(t).length ? (
                               <div className="flex items-center gap-2">
                                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
                                   <User className="h-3.5 w-3.5 text-primary" />
                                 </span>
                                 <span className="text-foreground">
-                                  {t.assignedTo}
+                                  {getTicketAssignees(t).join(", ")}
                                 </span>
                               </div>
                             ) : (
