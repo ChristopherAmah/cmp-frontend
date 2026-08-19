@@ -87,7 +87,7 @@ const NewTicketDrawer = ({ onClose, onCreate, organizations = [], canSetSlaTarge
     ) {
       setError(
         canSetSlaTarget
-          ? "Enter the required ticket details and an SLA target of at least 1 hour."
+          ? "Enter the required ticket details and a time target of at least 1 hour."
           : "Enter a title and organization, then select the ticket type and severity.",
       );
       return;
@@ -189,7 +189,7 @@ const NewTicketDrawer = ({ onClose, onCreate, organizations = [], canSetSlaTarge
             />
           ))}
           {canSetSlaTarget && (
-            <FormField label="SLA Target (hours)">
+            <FormField label="Time Target (hours)">
               <Input
                 type="number"
                 min="1"

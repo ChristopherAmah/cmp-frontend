@@ -897,7 +897,7 @@ const Support = () => {
                         "Title",
                         "Severity",
                         "Assignee",
-                        "SLA Target",
+                        "Time Target",
                         "Progress",
                         "Remaining",
                         "Status",

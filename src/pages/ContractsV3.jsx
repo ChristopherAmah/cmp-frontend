@@ -321,7 +321,7 @@ const ContractsV3 = () => {
                 <thead className="border-b border-border bg-secondary/50 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
                   <tr>
                     {[
-                      "Ref ID", "Customer", "Contract Name", "Status", "Amount",
+                      "Ref ID", "Customer", "Contract Name", "Status", "Amount", "Payment Due",
                       "End Date", "Assignee", "Last Updated", "Action",
                     ].map((heading) => <th key={heading} className="whitespace-nowrap px-4 py-3 font-medium">{heading}</th>)}
                   </tr>
@@ -346,6 +346,16 @@ const ContractsV3 = () => {
                         <td className="max-w-52 px-4 py-3"><p className="truncate text-foreground">{contract.title}</p><p className="mt-0.5 text-[10px] capitalize text-muted-foreground">{contract.category}</p></td>
                         <td className="px-4 py-3"><ContractStatusBadge status={contract.status} className={cn("px-1.5 py-0 text-[10px]", STATUS_COLORS[contract.status] || STATUS_COLORS.draft)} /></td>
                         <td className="whitespace-nowrap px-4 py-3 font-medium text-foreground">{contract.pricing?.baseAmount ? formatCurrency(contract.pricing.baseAmount, contract.pricing.currency) : "—"}</td>
+                        <td className="whitespace-nowrap px-4 py-3">
+                          <span className={cn(
+                            "inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium",
+                            Number(contract.outstandingBalance) > 0
+                              ? "border-red-200 bg-red-50 text-red-700"
+                              : "border-emerald-200 bg-emerald-50 text-emerald-700",
+                          )}>
+                            {Number(contract.outstandingBalance) > 0 ? "Yes" : "No"}
+                          </span>
+                        </td>
                         <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{formatDate(contract.timeline?.expirationDate)}</td>
                         <td className="max-w-32 truncate px-4 py-3 text-foreground">{assignee}</td>
                         <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{formatDate(contract.updatedAt)}</td>
