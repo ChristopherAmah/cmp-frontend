@@ -15,4 +15,7 @@ export const ticketService = {
   },
   getComments: async (ticketId) => (await api.get(`/tickets/${ticketId}/comments`)).data?.data || [],
   createComment: async (ticketId, body) => (await api.post(`/tickets/${ticketId}/comments`, { body })).data?.data,
+  getTasks: async (ticketId) => (await api.get(`/tickets/${ticketId}/tasks`)).data?.data || [],
+  createTask: async (ticketId, task) => (await api.post(`/tickets/${ticketId}/tasks`, task)).data?.data,
+  updateTask: async (ticketId, taskId, updates) => (await api.patch(`/tickets/${ticketId}/tasks/${taskId}`, updates)).data?.data,
 };
