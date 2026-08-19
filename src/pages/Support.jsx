@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ticketService } from "../services/ticketService";
+import { organizationService } from "../services/organizationService";
 import { notificationService } from "../services/notificationService";
 import { cn } from "@/lib/utils";
 import {
@@ -252,6 +253,7 @@ const Support = () => {
   const [organization, setOrganization] = useState("all");
   const [developer, setDeveloper] = useState("all");
   const [tickets, setTickets] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
   const [ticketsError, setTicketsError] = useState("");
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -289,9 +291,20 @@ const Support = () => {
     }
   };
 
+  const loadOrganizations = async () => {
+    try {
+      const response = await organizationService.getAll({ limit: 500 });
+      setOrganizations(response.data || []);
+    } catch (error) {
+      console.error("Failed to load organizations", error);
+      setOrganizations([]);
+    }
+  };
+
   useEffect(() => {
     loadTickets();
     loadNotifications();
+    loadOrganizations();
   }, []);
 
   useEffect(() => {
@@ -585,7 +598,7 @@ const Support = () => {
                   value={organization}
                   onChange={setOrganization}
                   placeholder="All Organization"
-                  options={["Covenant Microfinance Bank"]}
+                  options={organizations.map((organizationItem) => organizationItem.name)}
                 />
                 <Select value={developer} onValueChange={setDeveloper}>
                   <SelectTrigger className="h-10 border-border rounded-lg">
@@ -1174,7 +1187,7 @@ const Support = () => {
           }}
         />
       )}
-      {newTicketOpen && <NewTicketDrawer onClose={() => setNewTicketOpen(false)} onCreate={createTicket} />}
+      {newTicketOpen && <NewTicketDrawer organizations={organizations} onClose={() => setNewTicketOpen(false)} onCreate={createTicket} />}
     </DashboardLayout>
   );
 };

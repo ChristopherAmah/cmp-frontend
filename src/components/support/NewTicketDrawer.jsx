@@ -33,7 +33,7 @@ const TicketSelect = ({ label, value, placeholder, options, onChange }) => (
   </FormField>
 );
 
-const NewTicketDrawer = ({ onClose, onCreate }) => {
+const NewTicketDrawer = ({ onClose, onCreate, organizations = [] }) => {
   const [form, setForm] = useState({
     title: "",
     organization: "",
@@ -141,15 +141,13 @@ const NewTicketDrawer = ({ onClose, onCreate }) => {
               className="h-9 text-xs"
             />
           </FormField>
-          <FormField label="Organization Name">
-            <Input
-              value={form.organization}
-              onChange={(event) =>
-                updateField("organization", event.target.value)
-              }
-              className="h-9 text-xs"
-            />
-          </FormField>
+          <TicketSelect
+            label="Organization"
+            value={form.organization}
+            placeholder="Select organization"
+            options={organizations.map((organization) => organization.name)}
+            onChange={(value) => updateField("organization", value)}
+          />
           {fields.slice(0, 2).map(([key, label, placeholder, options]) => (
             <TicketSelect
               key={key}
