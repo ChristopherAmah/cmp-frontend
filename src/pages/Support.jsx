@@ -15,6 +15,7 @@ import {
 import { ticketService } from "../services/ticketService";
 import { organizationService } from "../services/organizationService";
 import { notificationService } from "../services/notificationService";
+import * as XLSX from "xlsx";
 import { cn } from "@/lib/utils";
 import {
   Plus,
@@ -394,6 +395,35 @@ const Support = () => {
     });
   }, [tickets, search, status, severity, priority, ticketType, organization, developer]);
 
+  const exportTickets = () => {
+    const rows = filtered.map((ticket) => ({
+      "Ticket ID": ticket.id,
+      Subject: ticket.subject,
+      Priority: ticket.priority,
+      Category: ticket.type || ticket.category || "",
+      Status: ticket.status,
+      "Assigned To": getTicketAssignees(ticket).join(", "),
+      SLA: ticket.sla?.label || ticket.sla?.state || "",
+      Customer: ticket.customer,
+      Created: formatTicketDate(ticket.created),
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    worksheet["!cols"] = [
+      { wch: 14 },
+      { wch: 36 },
+      { wch: 12 },
+      { wch: 16 },
+      { wch: 14 },
+      { wch: 32 },
+      { wch: 16 },
+      { wch: 30 },
+      { wch: 16 },
+    ];
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Tickets");
+    XLSX.writeFile(workbook, `support-tickets-${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
+
   const createTicket = async (ticket) => {
     const created = await ticketService.createTicket({
       ...ticket,
@@ -552,7 +582,7 @@ const Support = () => {
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Refresh
                 </Button>
-                <Button variant="outline" className="h-9 border-border">
+                <Button variant="outline" className="h-9 border-border" onClick={exportTickets} disabled={loadingTickets}>
                   <Download className="mr-2 h-4 w-4" />
                   Export
                 </Button>
