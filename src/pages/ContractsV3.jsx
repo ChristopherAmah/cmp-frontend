@@ -349,11 +349,11 @@ const ContractsV3 = () => {
                         <td className="whitespace-nowrap px-4 py-3">
                           <span className={cn(
                             "inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium",
-                            Number(contract.outstandingBalance) > 0
+                            contract.paymentDue === true
                               ? "border-red-200 bg-red-50 text-red-700"
                               : "border-emerald-200 bg-emerald-50 text-emerald-700",
                           )}>
-                            {Number(contract.outstandingBalance) > 0 ? "Yes" : "No"}
+                            {contract.paymentDue === true ? "Yes" : "No"}
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{formatDate(contract.timeline?.expirationDate)}</td>
