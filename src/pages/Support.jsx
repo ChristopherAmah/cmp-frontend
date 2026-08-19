@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import DashboardLayout from "../components/DashboardLayout";
 import TicketDetailDrawer from "../components/support/TicketDetailDrawer";
 import NewTicketDrawer from "../components/support/NewTicketDrawer";
@@ -39,7 +40,7 @@ import {
 
 // Ticket data is loaded from the backend
 
-const SLA_TARGET_HOURS = { Critical: 4, High: 8, Medium: 24, Low: 72 };
+const LEGACY_SLA_TARGET_HOURS = { Critical: 4, High: 8, Medium: 24, Low: 72 };
 
 const getTicketAssignees = (ticket) => {
   const assignees = ticket.assignedTo ?? ticket.developer;
@@ -56,7 +57,7 @@ const formatSlaDuration = (milliseconds) => {
 };
 
 const toSlaRecord = (ticket, now = Date.now()) => {
-  const targetHours = SLA_TARGET_HOURS[ticket.priority] || SLA_TARGET_HOURS.Low;
+  const targetHours = Number(ticket.slaTargetHours ?? ticket.sla?.targetHours) || LEGACY_SLA_TARGET_HOURS[ticket.priority] || LEGACY_SLA_TARGET_HOURS.Low;
   const targetMs = targetHours * 3_600_000;
   const createdAt = new Date(ticket.createdAt || ticket.created);
   const elapsedMs = Number.isNaN(createdAt.getTime()) ? 0 : Math.max(0, now - createdAt.getTime());
@@ -187,10 +188,10 @@ const getInitialNotificationPreferences = () => {
 };
 
 const SEVERITY_LEGEND = [
-  { label: "Critical · 4h", dot: "bg-red-500" },
-  { label: "High · 8h", dot: "bg-orange-500" },
-  { label: "Medium · 24h", dot: "bg-amber-500" },
-  { label: "Low · 72h", dot: "bg-sky-500" },
+  { label: "Critical ", dot: "bg-red-500" },
+  { label: "High ", dot: "bg-orange-500" },
+  { label: "Medium ", dot: "bg-amber-500" },
+  { label: "Low ", dot: "bg-sky-500" },
 ];
 
 // -------------------- Badge styles --------------------
@@ -244,6 +245,7 @@ const TABS = [
 ];
 
 const Support = () => {
+  const { user } = useAuth();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("tickets");
   const [search, setSearch] = useState("");
@@ -340,7 +342,7 @@ const Support = () => {
       { label: "Total Tickets", value: slaRows.length, trend: "Live", icon: FileText, tint: "sky" },
       { label: "Active (Breached + At Risk)", value: breached + atRisk, trend: "Live", icon: Layers, tint: "emerald" },
       { label: "Resolved", value: count("Resolved"), trend: "Live", icon: FileCheck2, tint: "sky" },
-      { label: "SLA Breached", value: breached, trend: "Live", icon: Clock, tint: "amber" },
+      { label: "Tickets Breached", value: breached, trend: "Live", icon: Clock, tint: "amber" },
       { label: "At Risk", value: atRisk, trend: "Live", icon: FileWarning, tint: "red" },
       { label: "Compliant", value: count("Compliant"), trend: "Live", icon: FileCheck2, tint: "sky" },
     ];
@@ -431,6 +433,7 @@ const Support = () => {
       subject: ticket.title,
       customer: ticket.organization,
       priority: ticket.priority || ticket.severity,
+      slaTargetHours: ticket.slaTargetHours ? Number(ticket.slaTargetHours) : undefined,
     });
     if (!created) {
       throw new Error("The ticket was not returned by the server.");
@@ -1217,7 +1220,7 @@ const Support = () => {
           }}
         />
       )}
-      {newTicketOpen && <NewTicketDrawer organizations={organizations} onClose={() => setNewTicketOpen(false)} onCreate={createTicket} />}
+      {newTicketOpen && <NewTicketDrawer canSetSlaTarget={["admin", "super_admin", "support_lead"].includes(user?.role)} organizations={organizations} onClose={() => setNewTicketOpen(false)} onCreate={createTicket} />}
     </DashboardLayout>
   );
 };

@@ -183,7 +183,7 @@ const Dashboard = () => {
             <DashboardMetricCard title="ATS Contracts" value={atsContracts.length} icon={Building2} tone="green" />
             <DashboardMetricCard title="Contracts Expiring Soon" value={contractsExpiringSoon} icon={FileText} tone="cyan" />
             <DashboardMetricCard title="Open Tickets" value={openTickets} icon={Clock} tone="orange" />
-            <DashboardMetricCard title="Tickets Breaching SLA" value={ticketsBreachingSla} icon={FileText} tone="red" />
+            <DashboardMetricCard title="Tickets Breaching ATS" value={ticketsBreachingSla} icon={FileText} tone="red" />
             <DashboardMetricCard title="ATS Renewals Due" value={atsRenewalsDue} icon={FileText} tone="cyan" />
           </div>
         </section>

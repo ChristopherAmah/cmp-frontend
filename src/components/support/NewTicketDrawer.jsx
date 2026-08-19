@@ -33,7 +33,7 @@ const TicketSelect = ({ label, value, placeholder, options, onChange }) => (
   </FormField>
 );
 
-const NewTicketDrawer = ({ onClose, onCreate, organizations = [] }) => {
+const NewTicketDrawer = ({ onClose, onCreate, organizations = [], canSetSlaTarget = false }) => {
   const [form, setForm] = useState({
     title: "",
     organization: "",
@@ -43,6 +43,7 @@ const NewTicketDrawer = ({ onClose, onCreate, organizations = [] }) => {
     channel: "",
     type: "",
     priority: "",
+    slaTargetHours: "",
     description: "",
   });
   const [error, setError] = useState("");
@@ -81,10 +82,13 @@ const NewTicketDrawer = ({ onClose, onCreate, organizations = [] }) => {
       !form.title.trim() ||
       !form.organization.trim() ||
       !form.type ||
-      !form.priority
+      !form.priority ||
+      (canSetSlaTarget && (!form.slaTargetHours || Number(form.slaTargetHours) < 1))
     ) {
       setError(
-        "Enter a title and organization, then select the ticket type and severity.",
+        canSetSlaTarget
+          ? "Enter the required ticket details and an SLA target of at least 1 hour."
+          : "Enter a title and organization, then select the ticket type and severity.",
       );
       return;
     }
@@ -184,6 +188,19 @@ const NewTicketDrawer = ({ onClose, onCreate, organizations = [] }) => {
               onChange={(value) => updateField(key, value)}
             />
           ))}
+          {canSetSlaTarget && (
+            <FormField label="SLA Target (hours)">
+              <Input
+                type="number"
+                min="1"
+                max="8760"
+                value={form.slaTargetHours}
+                onChange={(event) => updateField("slaTargetHours", event.target.value)}
+                placeholder="Enter resolution target in hours"
+                className="h-9 text-xs"
+              />
+            </FormField>
+          )}
           <FormField label="Description">
             <textarea
               value={form.description}
