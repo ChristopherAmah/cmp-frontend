@@ -5,6 +5,10 @@ export const ticketService = {
     const response = await api.get('/tickets');
     return response.data?.data || [];
   },
+  updateTicket: async (ticketId, updates) => {
+    const response = await api.patch(`/tickets/${ticketId}`, updates);
+    return response.data?.data;
+  },
   createTicket: async (ticketData) => {
     const response = await api.post('/tickets', ticketData);
     return response.data?.data;

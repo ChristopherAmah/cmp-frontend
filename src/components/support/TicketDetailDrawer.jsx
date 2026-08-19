@@ -6,6 +6,7 @@ import TaskPanel from "./TaskPanel";
 import TimePanel from "./TimePanel";
 import AttachmentPanel from "./AttachmentPanel";
 import { ticketService } from "@/services/ticketService";
+import { userService } from "@/services/userService";
 import {
   X,
   Grid2X2,
@@ -53,13 +54,15 @@ const Card = ({ title, children }) => (
   </section>
 );
 
-const TicketDetailDrawer = ({ ticket, onClose }) => {
+const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
   const { user } = useAuth();
   const [tab, setTab] = useState("Details");
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [commentError, setCommentError] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [developers, setDevelopers] = useState([]);
+  const [assigningDeveloper, setAssigningDeveloper] = useState(false);
   const targetHours = targets[ticket.priority] || 72;
   const elapsed = Math.max(
     0,
@@ -85,7 +88,7 @@ const TicketDetailDrawer = ({ ticket, onClose }) => {
         : slaState === "Resolved"
           ? "bg-slate-300"
           : "bg-emerald-500";
-  const canManage = ["admin", "super_admin"].includes(user?.role);
+  const canManage = ["admin", "super_admin", "support_lead"].includes(user?.role);
   const tabs = [
     ["Details", Grid2X2],
     ["Comments", MessageSquare],
@@ -100,13 +103,18 @@ const TicketDetailDrawer = ({ ticket, onClose }) => {
     ["Module", ticket.module || "—"],
     ["Channel", ticket.channel || "—"],
   ];
-  const canComment = ["admin", "super_admin", "developer"].includes(user?.role);
+  const canComment = ["admin", "super_admin", "support_lead", "developer"].includes(user?.role);
 
   useEffect(() => {
     ticketService
       .getComments(ticket.id)
       .then(setComments)
       .catch(() => setCommentError("Unable to load comments."));
+
+    userService
+      .getDevelopers()
+      .then((developerList) => setDevelopers(developerList))
+      .catch(() => setDevelopers([]));
   }, [ticket.id]);
 
   const submitComment = async () => {
@@ -122,6 +130,50 @@ const TicketDetailDrawer = ({ ticket, onClose }) => {
     } finally {
       setSubmittingComment(false);
     }
+  };
+
+  const handleAssignDeveloper = async (developerName) => {
+    if (!developerName) return;
+    setAssigningDeveloper(true);
+    try {
+      const updated = await ticketService.updateTicket(ticket.id, {
+        assignedTo: developerName,
+        developer: developerName,
+      });
+      onTicketUpdated?.(updated);
+    } catch (error) {
+      console.error("Unable to assign developer", error);
+    } finally {
+      setAssigningDeveloper(false);
+    }
+  };
+
+  const handleCloseTicket = async () => {
+    try {
+      const updated = await ticketService.updateTicket(ticket.id, {
+        status: "Closed",
+      });
+      onTicketUpdated?.(updated);
+    } catch (error) {
+      console.error("Unable to close ticket", error);
+    }
+  };
+
+  const handleEscalate = () => {
+    const defaultEmail = "support@company.com";
+    const recipient = window.prompt(
+      "Enter the email address to escalate this ticket:",
+      defaultEmail,
+    );
+
+    if (!recipient) return;
+
+    const subject = encodeURIComponent(`Escalation: ${ticket.subject} (${ticket.id})`);
+    const body = encodeURIComponent(
+      `Hello,\n\nThis ticket needs escalation.\n\nTicket ID: ${ticket.id}\nSubject: ${ticket.subject}\nPriority: ${ticket.priority}\nStatus: ${ticket.status}\nCustomer: ${ticket.customer || "—"}\n\nPlease review and advise.`,
+    );
+
+    window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -238,7 +290,24 @@ const TicketDetailDrawer = ({ ticket, onClose }) => {
               </Card>
             </div>
             <Card title="Assigned developers">
-              <p className="text-xs">{ticket.assignedTo || "Unassigned"}</p>
+              <div className="space-y-3">
+                <select
+                  value={ticket.assignedTo || ""}
+                  onChange={(event) => handleAssignDeveloper(event.target.value)}
+                  disabled={assigningDeveloper || developers.length === 0}
+                  className="w-full rounded-md border border-border bg-white px-2.5 py-2 text-xs text-foreground dark:bg-slate-950"
+                >
+                  <option value="">Unassigned</option>
+                  {developers.map((developer) => (
+                    <option key={developer._id} value={developer.name}>
+                      {developer.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-muted-foreground">
+                  {ticket.assignedTo || "Unassigned"}
+                </p>
+              </div>
             </Card>
           </div>
         )}
@@ -249,11 +318,11 @@ const TicketDetailDrawer = ({ ticket, onClose }) => {
       </div>
       <footer className="flex items-center justify-between border-t border-border p-4">
         <div className="flex gap-2">
-          <Button size="sm" className="h-8 text-xs">
+          <Button size="sm" className="h-8 text-xs" onClick={handleCloseTicket}>
             <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
             Mark Resolved
           </Button>
-          <Button size="sm" variant="outline" className="h-8 text-xs">
+          <Button size="sm" variant="outline" className="h-8 text-xs" onClick={handleEscalate}>
             <TriangleAlert className="mr-1 h-3.5 w-3.5" />
             Escalate
           </Button>

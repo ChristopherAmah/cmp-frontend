@@ -1155,7 +1155,20 @@ const Support = () => {
           </div>
         )}
       </div>
-      {selectedTicket && <TicketDetailDrawer ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />}
+      {selectedTicket && (
+        <TicketDetailDrawer
+          ticket={selectedTicket}
+          onClose={() => setSelectedTicket(null)}
+          onTicketUpdated={(updatedTicket) => {
+            setTickets((currentTickets) =>
+              currentTickets.map((ticket) =>
+                ticket.id === updatedTicket?.id ? updatedTicket : ticket,
+              ),
+            );
+            setSelectedTicket(updatedTicket);
+          }}
+        />
+      )}
       {newTicketOpen && <NewTicketDrawer onClose={() => setNewTicketOpen(false)} onCreate={createTicket} />}
     </DashboardLayout>
   );
