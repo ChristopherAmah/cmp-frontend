@@ -63,6 +63,8 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [developers, setDevelopers] = useState([]);
   const [assigningDeveloper, setAssigningDeveloper] = useState(false);
+  const [selectedDevelopers, setSelectedDevelopers] = useState([]);
+  const [assignmentError, setAssignmentError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [savingEdit, setSavingEdit] = useState(false);
   const [editError, setEditError] = useState("");
@@ -114,6 +116,19 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
       ? [ticket.assignedTo]
       : [];
 
+  const assignmentChanged =
+    selectedDevelopers.length !== assignedDevelopers.length ||
+    selectedDevelopers.some((developer) => !assignedDevelopers.includes(developer));
+
+  useEffect(() => {
+    const savedDevelopers = Array.isArray(ticket.assignedTo)
+      ? ticket.assignedTo
+      : ticket.assignedTo
+        ? [ticket.assignedTo]
+        : [];
+    setSelectedDevelopers(savedDevelopers);
+  }, [ticket.id, ticket.assignedTo]);
+
   useEffect(() => {
     setEditForm({
       subject: ticket.subject || "",
@@ -156,15 +171,27 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
     }
   };
 
-  const handleAssignDeveloper = async (selectedNames) => {
+  const toggleDeveloper = (developerName) => {
+    setSelectedDevelopers((current) =>
+      current.includes(developerName)
+        ? current.filter((name) => name !== developerName)
+        : [...current, developerName],
+    );
+    setAssignmentError("");
+  };
+
+  const handleAssignDevelopers = async () => {
     setAssigningDeveloper(true);
+    setAssignmentError("");
     try {
       const updated = await ticketService.updateTicket(ticket.id, {
-        assignedTo: selectedNames,
+        assignedTo: selectedDevelopers,
       });
       onTicketUpdated?.(updated);
     } catch (error) {
-      console.error("Unable to assign developer", error);
+      setAssignmentError(
+        error.response?.data?.message || "Unable to assign developers.",
+      );
     } finally {
       setAssigningDeveloper(false);
     }
@@ -357,19 +384,50 @@ const TicketDetailDrawer = ({ ticket, onClose, onTicketUpdated }) => {
             </div>
             <Card title="Assigned developers">
               <div className="space-y-3">
-                <select
-                  multiple
-                  value={assignedDevelopers}
-                  onChange={(event) => handleAssignDeveloper(Array.from(event.target.selectedOptions, (option) => option.value))}
-                  disabled={assigningDeveloper || developers.length === 0}
-                  className="min-h-24 w-full rounded-md border border-border bg-white px-2.5 py-2 text-xs text-foreground dark:bg-slate-950"
-                >
+                <div className="grid gap-2">
                   {developers.map((developer) => (
-                    <option key={developer._id} value={developer.name}>
-                      {developer.name}
-                    </option>
+                    <button
+                      key={developer._id}
+                      type="button"
+                      onClick={() => toggleDeveloper(developer.name)}
+                      disabled={assigningDeveloper}
+                      aria-pressed={selectedDevelopers.includes(developer.name)}
+                      className={cn(
+                        "flex items-center justify-between rounded-md border px-3 py-2 text-left text-xs transition-colors",
+                        selectedDevelopers.includes(developer.name)
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-white text-foreground hover:bg-secondary dark:bg-slate-950",
+                      )}
+                    >
+                      <span className="flex items-center gap-2">
+                        <UserRound className="h-3.5 w-3.5" />
+                        <span>
+                          <span className="block font-medium">{developer.name}</span>
+                          <span className="block text-[10px] text-muted-foreground">{developer.email}</span>
+                        </span>
+                      </span>
+                      <span className="text-[10px] font-semibold">
+                        {selectedDevelopers.includes(developer.name) ? "Selected" : "Select"}
+                      </span>
+                    </button>
                   ))}
-                </select>
+                </div>
+                {developers.length === 0 && (
+                  <p className="text-[10px] text-muted-foreground">No developers are available.</p>
+                )}
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[10px] text-muted-foreground">
+                    {selectedDevelopers.length ? `${selectedDevelopers.length} selected` : "No developers selected"}
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={handleAssignDevelopers}
+                    disabled={assigningDeveloper || !assignmentChanged}
+                  >
+                    {assigningDeveloper ? "Assigning..." : "Assign developers"}
+                  </Button>
+                </div>
+                {assignmentError && <p className="text-xs text-destructive">{assignmentError}</p>}
                 <p className="text-[10px] text-muted-foreground">
                   {assignedDevelopers.length ? assignedDevelopers.join(", ") : "Unassigned"}
                 </p>
