@@ -38,6 +38,8 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
   const roleLabel = {
     super_admin: "Super Admin",
     admin: "Admin",
+    support_lead: "Support Lead",
+    "support-lead": "Support Lead",
     developer: "Developer",
     user: "User",
   };

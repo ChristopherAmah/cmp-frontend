@@ -210,6 +210,18 @@ const Users = () => {
           Admin
         </Badge>
       ),
+      support_lead: (
+        <Badge className="bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/50">
+          <ShieldCheck className="w-3 h-3 mr-1" />
+          Support Lead
+        </Badge>
+      ),
+      "support-lead": (
+        <Badge className="bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/50">
+          <ShieldCheck className="w-3 h-3 mr-1" />
+          Support Lead
+        </Badge>
+      ),
       developer: (
         <Badge className="bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-950/30 dark:text-violet-400 dark:border-violet-900/50">
           <Shield className="w-3 h-3 mr-1" />
@@ -453,6 +465,7 @@ const Users = () => {
                 <SelectContent>
                   <SelectItem value="user">User</SelectItem>
                   <SelectItem value="developer">Developer</SelectItem>
+                  <SelectItem value="support_lead">Support Lead</SelectItem>
                   {isSuperAdmin && (
                     <>
                       <SelectItem value="admin">Admin</SelectItem>
@@ -546,6 +559,7 @@ const Users = () => {
                   <SelectContent>
                     <SelectItem value="user">User</SelectItem>
                     <SelectItem value="developer">Developer</SelectItem>
+                    <SelectItem value="support_lead">Support Lead</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="super_admin">Super Admin</SelectItem>
                   </SelectContent>

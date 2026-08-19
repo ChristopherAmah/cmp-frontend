@@ -64,6 +64,7 @@ export const usePermissions = () => {
     // Role checks
     isSuperAdmin: role === "super_admin",
     isAdmin: role === "admin" || role === "super_admin",
+    isSupportLead: role === "support_lead" || role === "support-lead",
     isDeveloper: role === "developer",
     isUser: role === "user",
 
