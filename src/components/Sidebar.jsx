@@ -35,6 +35,7 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
   const { theme, setTheme } = useTheme();
   const { canViewOrganizations, canViewAuditLogs } = usePermissions();
   const [collapsed, setCollapsed] = useState(false);
+  const canAccessWorkspace = ["admin", "super_admin", "support_lead", "support-lead"].includes(user?.role);
   const roleLabel = {
     super_admin: "Super Admin",
     admin: "Admin",
@@ -76,12 +77,18 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-    ...(canViewOrganizations
+    ...(canAccessWorkspace
+      ? [{ icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" }]
+      : []),
+    ...(canAccessWorkspace && canViewOrganizations
       ? [{ icon: Building2, label: "Organizations", path: "/organizations" }]
       : []),
-    { icon: FileText, label: "Documents", path: "/dashboard/documents" },
-    { icon: ScrollText, label: "Contracts", path: "/contracts" },
+    ...(canAccessWorkspace
+      ? [
+          { icon: FileText, label: "Documents", path: "/dashboard/documents" },
+          { icon: ScrollText, label: "Contracts", path: "/contracts" },
+        ]
+      : []),
     ...(user?.role === "admin" || user?.role === "super_admin"
       ? [{ icon: Users, label: "Users", path: "/users" }]
       : []),

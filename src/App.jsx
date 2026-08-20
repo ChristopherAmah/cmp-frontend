@@ -29,6 +29,10 @@ import Notifications from "./pages/Notifications";
 import Support from "./pages/Support";
 import ErrorBoundary from "./components/ErrorBoundary";
 
+const workspaceRoles = ["super_admin", "admin", "support_lead", "support-lead"];
+const adminRoles = ["super_admin", "admin"];
+const superAdminRoles = ["super_admin"];
+
 // Component to clear notifications on navigation
 // Note: We don't clear toasts on navigation anymore to allow them to display
 // Users can dismiss them manually if needed
@@ -52,7 +56,7 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <Dashboard />
                 </ProtectedRoute>
               }
@@ -60,7 +64,7 @@ function App() {
             <Route
               path="/organizations"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <Organizations />
                 </ProtectedRoute>
               }
@@ -68,7 +72,7 @@ function App() {
             <Route
               path="/organization/:id"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <OrganizationDetail />
                 </ProtectedRoute>
               }
@@ -84,7 +88,7 @@ function App() {
             <Route
               path="/dashboard/documents"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <AllDocuments />
                 </ProtectedRoute>
               }
@@ -92,7 +96,7 @@ function App() {
             <Route
               path="/invoices"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <ErrorBoundary>
                     <Invoices />
                   </ErrorBoundary>
@@ -102,7 +106,7 @@ function App() {
             <Route
               path="/contracts"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <ErrorBoundary>
                     <ContractsV3 />
                   </ErrorBoundary>
@@ -112,7 +116,7 @@ function App() {
             <Route
               path="/contracts/new"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <ErrorBoundary>
                     <CreateContract />
                   </ErrorBoundary>
@@ -122,7 +126,7 @@ function App() {
             <Route
               path="/contracts/:id"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <ErrorBoundary>
                     <ContractDetailV3 />
                   </ErrorBoundary>
@@ -132,7 +136,7 @@ function App() {
             <Route
               path="/invoices/:id"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <ErrorBoundary>
                     <InvoiceDetail />
                   </ErrorBoundary>
@@ -142,7 +146,7 @@ function App() {
             <Route
               path="/users"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={adminRoles}>
                   <ErrorBoundary>
                     <Users />
                   </ErrorBoundary>
@@ -152,7 +156,7 @@ function App() {
             <Route
               path="/audit-logs"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={superAdminRoles}>
                   <ErrorBoundary>
                     <AuditLogs />
                   </ErrorBoundary>
@@ -172,7 +176,7 @@ function App() {
             <Route
               path="/notifications"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={workspaceRoles}>
                   <ErrorBoundary>
                     <Notifications />
                   </ErrorBoundary>
