@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,16 +6,28 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle2, KeyRound, Loader2 } from "lucide-react";
 import { authService } from "@/services/authService";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PasswordSetup = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const token = searchParams.get("token") || "";
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [clearingSession, setClearingSession] = useState(true);
+
+  useEffect(() => {
+    const clearExistingSession = async () => {
+      await logout();
+      setClearingSession(false);
+    };
+
+    void clearExistingSession();
+  }, [logout]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -61,8 +73,8 @@ const PasswordSetup = () => {
             <Label htmlFor="setup-confirmation">Confirm password</Label>
             <Input id="setup-confirmation" type="password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} minLength={8} maxLength={128} autoComplete="new-password" required disabled={submitting || Boolean(success)} />
           </div>
-          <Button type="submit" className="w-full" disabled={submitting || Boolean(success)}>
-            {submitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Setting password...</> : "Set password"}
+          <Button type="submit" className="w-full" disabled={clearingSession || submitting || Boolean(success)}>
+            {clearingSession || submitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{clearingSession ? "Preparing setup..." : "Setting password..."}</> : "Set password"}
           </Button>
         </form>
         <p className="mt-6 text-center text-xs text-muted-foreground"><Link to="/login" className="text-primary hover:underline">Return to sign in</Link></p>

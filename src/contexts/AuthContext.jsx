@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useCallback, useContext, useState, useEffect } from "react";
 import { authService } from "../services/authService";
 
 const AUTH_DEBUG = true; // Enable debugging to troubleshoot login issue
@@ -148,7 +148,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     if (DEV_AUTH_BYPASS) return;
 
     try {
@@ -160,7 +160,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
     }
-  };
+  }, []);
 
   // Update user data locally without API call (for immediate UI updates)
   const updateUser = (userData) => {
