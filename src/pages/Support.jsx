@@ -318,6 +318,17 @@ const Support = () => {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    const ticketId = new URLSearchParams(location.search).get("ticket");
+    if (!ticketId || tickets.length === 0) return;
+
+    const ticket = tickets.find((item) => item.id === ticketId);
+    if (ticket) {
+      setActiveTab("tickets");
+      setSelectedTicket(ticket);
+    }
+  }, [location.search, tickets]);
+
   // SLA monitoring state
   const [slaSearch, setSlaSearch] = useState("");
   const [slaStatus, setSlaStatus] = useState("all");

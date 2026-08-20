@@ -12,6 +12,7 @@ import { NotificationManagerProvider, useNotificationManager } from "./contexts/
 import { Toaster } from "./components/ui/toaster";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
+import PasswordSetup from "./pages/PasswordSetup";
 import Dashboard from "./pages/Dashboard";
 import Organizations from "./pages/Organizations";
 import OrganizationDetail from "./pages/OrganizationDetail";
@@ -47,6 +48,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/set-password" element={<PasswordSetup />} />
             <Route
               path="/dashboard"
               element={

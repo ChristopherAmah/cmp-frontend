@@ -97,8 +97,8 @@ const Users = () => {
     setError("");
     setSuccess("");
 
-    if (!formData.name || !formData.email || !formData.password) {
-      setError("Name, email, and password are required");
+    if (!formData.name || !formData.email) {
+      setError("Name and email are required");
       return;
     }
 
@@ -438,19 +438,9 @@ const Users = () => {
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="create-password">Password *</Label>
-              <Input
-                id="create-password"
-                type="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                required
-                minLength={6}
-              />
-            </div>
+            <p className="rounded-md bg-secondary px-3 py-2 text-xs text-muted-foreground">
+              The user will receive a one-time email link to create their password. The link expires in 24 hours.
+            </p>
             <div className="space-y-2">
               <Label htmlFor="create-role">Role *</Label>
               <Select

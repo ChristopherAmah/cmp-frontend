@@ -50,6 +50,12 @@ const Profile = () => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [changingPassword, setChangingPassword] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileSelect = async (e) => {
@@ -156,6 +162,31 @@ const Profile = () => {
     }
   };
 
+  const handlePasswordChange = async (event) => {
+    event.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setError("New password and confirmation do not match.");
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const response = await userService.changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
+      setSuccess(response.message || "Password changed successfully.");
+      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      setError(err.response?.data?.message || "Unable to change password.");
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="">
@@ -253,6 +284,61 @@ const Profile = () => {
                   </p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-border dark:border-border rounded-xl bg-card mb-6">
+            <CardHeader className="border-b border-border dark:border-border px-6 py-5">
+              <CardTitle className="text-base font-semibold text-foreground dark:text-foreground">
+                Change Password
+              </CardTitle>
+              <CardDescription className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
+                Update your password using your current password.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <form onSubmit={handlePasswordChange} className="max-w-xl space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="current-password">Current Password</Label>
+                  <Input
+                    id="current-password"
+                    type="password"
+                    value={passwordForm.currentPassword}
+                    onChange={(event) => setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }))}
+                    autoComplete="current-password"
+                    required
+                  />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      value={passwordForm.newPassword}
+                      onChange={(event) => setPasswordForm((current) => ({ ...current, newPassword: event.target.value }))}
+                      autoComplete="new-password"
+                      minLength={8}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(event) => setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }))}
+                      autoComplete="new-password"
+                      minLength={8}
+                      required
+                    />
+                  </div>
+                </div>
+                <Button type="submit" disabled={changingPassword}>
+                  {changingPassword ? "Changing..." : "Change Password"}
+                </Button>
+              </form>
             </CardContent>
           </Card>
 

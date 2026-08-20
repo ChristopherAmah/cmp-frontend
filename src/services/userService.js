@@ -26,6 +26,11 @@ export const userService = {
     return response.data;
   },
 
+  changePassword: async (passwordData) => {
+    const response = await api.patch("/users/change-password", passwordData);
+    return response.data;
+  },
+
   toggleStatus: async (id) => {
     const response = await api.patch(`/users/${id}/toggle-status`);
     return response.data;

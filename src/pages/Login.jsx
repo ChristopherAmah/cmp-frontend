@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Eye, EyeOff, Shield } from "lucide-react";
-import logoblack from "../assets/logoblack.png";
-import logowhite from "../assets/logowhite.png";
-import { useTheme } from "../components/ThemeProvider";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,17 +12,21 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isAuthenticated, loading: authLoading } = useAuth();
+  const { login, user, isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { theme } = useTheme();
+  const location = useLocation();
+  const requestedDestination = new URLSearchParams(location.search).get("next");
+  const destination = requestedDestination?.startsWith("/") && !requestedDestination.startsWith("//")
+    ? requestedDestination
+    : "/dashboard";
 
   useEffect(() => {
     console.log("Login useEffect triggered:", { isAuthenticated, authLoading });
     if (!authLoading && isAuthenticated) {
       console.log("Navigating to dashboard...");
-      navigate("/dashboard", { replace: true });
+      navigate(user?.mustChangePassword ? "/set-password" : destination, { replace: true });
     }
-  }, [isAuthenticated, authLoading, navigate]);
+  }, [isAuthenticated, authLoading, navigate, user, destination]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,8 +40,8 @@ const Login = () => {
       setLoading(false);
 
       if (result.success) {
-        console.log("Login successful, navigating to dashboard...");
-        navigate("/dashboard", { replace: true });
+        console.log("Login successful, navigating...");
+        navigate(result.user?.mustChangePassword ? "/set-password" : destination, { replace: true });
       } else {
         setError(result.message || "Invalid email or password");
       }

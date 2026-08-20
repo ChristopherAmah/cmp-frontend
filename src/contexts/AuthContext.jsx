@@ -10,6 +10,7 @@ const DEV_USER = {
   name: "UI Developer",
   email: "ui-developer@local.test",
   role: "super_admin",
+  mustChangePassword: false,
 };
 
 const AuthContext = createContext();

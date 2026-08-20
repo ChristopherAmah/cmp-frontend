@@ -1,6 +1,10 @@
 import api from "./api";
 
 export const authService = {
+  completePasswordSetup: async (token, password) => {
+    const response = await api.post("/auth/password-setup", { token, password });
+    return response.data;
+  },
   login: async (email, password) => {
     const response = await api.post("/auth/login", { email, password });
     return response.data;

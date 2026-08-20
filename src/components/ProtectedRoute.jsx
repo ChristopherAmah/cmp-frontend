@@ -1,8 +1,9 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user, loading } = useAuth();
+  const location = useLocation();
 
   // If loading (checking token), show nothing - will redirect once check completes
   if (loading) {
@@ -11,7 +12,8 @@ const ProtectedRoute = ({ children }) => {
 
   // If not authenticated or no user, redirect to login immediately
   if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />;
+    const next = `${location.pathname}${location.search}`;
+    return <Navigate to={`/login?next=${encodeURIComponent(next)}`} replace />;
   }
 
   // Render children only if authenticated
